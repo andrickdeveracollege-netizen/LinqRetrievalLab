@@ -1,26 +1,27 @@
-using LinqRetrievalLab.Data;
-using LinqRetrievalLab.Models.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+using LinqRetrievalLab.Models.Data;
+using System;
+using System.Text.Json.Serialization;
+
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddDbContext<LinqRetrievalLabContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("LinqRetrievalLabContext") ?? throw new InvalidOperationException("Connection string 'LinqRetrievalLabContext' not found.")));
 
-// Add services to the container.
+// Configure controllers and JSON to ignore reference cycles
+builder.Services
+    .AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+    });
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection")
-    )
-);
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -28,9 +29,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();

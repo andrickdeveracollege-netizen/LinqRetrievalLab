@@ -7,6 +7,6 @@ namespace LinqRetrievalLab.Models.Domain
     {
         public int Id { get; set; }
         public string Name { get; set; } = default!;
-        public List<Product> Products { get; set; } = new();
+        public List<Product> Product { get; set; } = new();
     }
 }

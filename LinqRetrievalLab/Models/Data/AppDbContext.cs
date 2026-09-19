@@ -1,11 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using LinqRetrievalLab.Models.Domain;
+using System.ComponentModel.DataAnnotations;
 
-namespace LinqRetrievalLab.Data
+namespace LinqRetrievalLab.Models.Data
 {
-    public class LinqRetrievalLabContext : DbContext
+    public class AppDbContext : DbContext
     {
-        public LinqRetrievalLabContext(DbContextOptions<LinqRetrievalLabContext> options)
+        public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options) { }
 
         public DbSet<Category> Category { get; set; } = default!;
@@ -15,9 +16,8 @@ namespace LinqRetrievalLab.Data
         {
             modelBuilder.Entity<Product>()
                 .HasOne(p => p.Category)
-                .WithMany(c => c.Products)
+                .WithMany(c => c.Product)
                 .HasForeignKey(p => p.CategoryId);
         }
-
     }
 }
